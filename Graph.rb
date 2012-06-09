@@ -60,3 +60,23 @@ class Graph
 		raise ArgumentError, "The graph doesn't contais the node" if !@nodes.include?(node)
 		return @edges[node].size
 	end
+
+	def is_regular
+		node = @nodes.to_a[0]
+		n =  degree(node)
+		@nodes.each do |x|
+			if degree(x) != n
+				return false
+			end
+		end
+		return true
+	end
+
+	def is_complete
+		n = @nodes.size - 1
+		@nodes.each do |x|
+			if degree(x) != n
+				return false
+		end
+		return true
+	end
