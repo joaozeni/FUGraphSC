@@ -29,7 +29,6 @@ class Graph
 		raise ArgumentError, "The graph doesn't contais one of the nodes" if ( !@nodes.include?(node1) | !@nodes.include?(node2))
 		@edges[node1] << node2
 		@edges[node2] << node1
-		end
 	end
 
 	def remove_vertice(node1, node2)
@@ -77,6 +76,38 @@ class Graph
 		@nodes.each do |x|
 			if degree(x) != n
 				return false
+			end
 		end
 		return true
 	end
+
+	def transitive_closure(node)
+		raise ArgumentError, "The graph doesn't contais the node" if !@nodes.include?(node)
+		tc = Set.new
+		return search_transitive_closure(node, tc)
+	end
+
+	def search_transitive_closure(node, areadyVisited)
+		raise ArgumentError, "The graph doesn't contais the node" if !@nodes.include?(node)
+		tc = Set.new
+		areadyVisited << node
+		neighbours(node).each do |x|
+			if ! areadyVisited.include?(x)
+				tc = tc + search_transitive_closure(x, areadyVisited)
+			end
+		end
+		return tc
+	end
+
+	def is_connected
+		return @nodes == transitive_closure(a_node())
+	end
+
+	def to_s
+		graph_string = String.new
+		@edges.each_key do |x|
+			@edges[x].each{|y| graph_string << x.to_s + "->" + y.to_s + "\n"}
+		end
+		return graph_string
+	end
+end
