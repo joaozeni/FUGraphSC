@@ -90,9 +90,10 @@ class Graph
 	def search_transitive_closure(node, areadyVisited)
 		raise ArgumentError, "The graph doesn't contais the node" if !@nodes.include?(node)
 		tc = Set.new
-		areadyVisited << node
+		areadyVisited = areadyVisited + node
+		tc = tc + node
 		neighbours(node).each do |x|
-			if ! areadyVisited.include?(x)
+			if !areadyVisited.include?(x)
 				tc = tc + search_transitive_closure(x, areadyVisited)
 			end
 		end
@@ -105,8 +106,10 @@ class Graph
 
 	def to_s
 		graph_string = String.new
+		printed = Set.new
 		@edges.each_key do |x|
-			@edges[x].each{|y| graph_string << x.to_s + "->" + y.to_s + "\n"}
+			@edges[x].each{|y| if ! printed.include?(y); graph_string << x.to_s + "<->" + y.to_s + "\n";end}
+			printed << x
 		end
 		return graph_string
 	end
