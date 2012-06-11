@@ -10,12 +10,15 @@ class Graph
 
 	attr_accessor :nodes
 	attr_accessor :edges
+	attr_accessor :nodes_attr
+	attr_accessor :edges_attr
 
-	def add_node(node)
+	def add_node(node, node_attr_name=[], node_attr=[])
 		@nodes << node
 		@edges[node] = Set.new
-		@edges_attr[node] = Set.new
-		@nodes_attr[node] = Set.new
+		@edges_attr[node] = Hash.new
+		@nodes_attr[node] = Hash.new
+		node_attr_name.each_index{|x| @nodes_attr[node][node_attr_name[x]] = node_attr[x]}
 	end
 
 	def remove_node(node)
@@ -25,17 +28,23 @@ class Graph
 		@nodes_attr.delete(node)
 	end
 
-	def add_vertice(node1, node2)
+	def add_edge(node1, node2, edge_attr_name=[], edge_attr=[])
 		raise ArgumentError, "The graph doesn't contais one of the nodes" if ( !@nodes.include?(node1) | !@nodes.include?(node2))
 		@edges[node1] << node2
+		@edges_attr[node1][node2] = Hash.new
+		edge_attr_name.each_index{|x| @edge_attr[node1][node2][edge_attr_name[x]] = edge_attr[x]}
 		@edges[node2] << node1
+		@edges_attr[node2][node1] = Hash.new
+		edge_attr_name.each_index{|x| @edge_attr[node2][node1][edge_attr_name[x]] = edge_attr[x]}
 	end
 
-	def remove_vertice(node1, node2)
+	def remove_edge(node1, node2)
 		raise ArgumentError, "The graph doesn't contais one of the nodes" if ( !@nodes.include?(node1) | !@nodes.include?(node2))
 		raise ArgumentError, "The graph doesn't contain the edge" if ( !@edges[node1].include?(node2) | !@edges[node2].include?(node1))
 		@edges[node1].delete(node2)
 		@edges[node2].delete(node1)
+		@edges_attr[node1].delete(node2)
+		@edges_attr[node2].delete(node1)
 	end
 
 	def order
