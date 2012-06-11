@@ -21,11 +21,23 @@ class Graph
 		node_attr_name.each_index{|x| @nodes_attr[node][node_attr_name[x]] = node_attr[x]}
 	end
 
+	def add_node_attr(node, node_attr_name=[], node_attr=[])
+		raise ArgumentError, "The graph doesn't contais the node" if !@nodes.include?(node)
+		node_attr_name.each_index{|x| @nodes_attr[node][node_attr_name[x]] = node_attr[x]}
+	end
+
+	def remove_node_attr(node, node_attr_name=[], node_attr=[])
+		raise ArgumentError, "The graph doesn't contais the node" if !@nodes.include?(node)
+		node_attr_name.each_index{|x| @nodes_attr[node].delete(node_attr_name[x])}
+	end
+
 	def remove_node(node)
 		raise ArgumentError, "The graph doesn't contais the node" if !@nodes.include?(node)
 		@nodes.delete(node)
 		@edges_attr.delete(node)
 		@nodes_attr.delete(node)
+		@edges[node].each{|x| @edges[x].delete(node)}
+		@edges.delete(node)
 	end
 
 	def add_edge(node1, node2, edge_attr_name=[], edge_attr=[])
@@ -45,6 +57,20 @@ class Graph
 		@edges[node2].delete(node1)
 		@edges_attr[node1].delete(node2)
 		@edges_attr[node2].delete(node1)
+	end
+
+	def add_edge_attr(node1, node2, edge_attr_name=[], edge_attr=[])
+		raise ArgumentError, "The graph doesn't contais one of the nodes" if ( !@nodes.include?(node1) | !@nodes.include?(node2))
+		raise ArgumentError, "The graph doesn't contain the edge" if ( !@edges[node1].include?(node2) | !@edges[node2].include?(node1))
+		edge_attr_name.each_index{|x| @edge_attr[node1][node2][edge_attr_name[x]] = edge_attr[x]}
+		edge_attr_name.each_index{|x| @edge_attr[node2][node1][edge_attr_name[x]] = edge_attr[x]}
+	end
+
+	def remove_edge_attr(node1, node2, edge_attr_name=[], edge_attr=[])
+		raise ArgumentError, "The graph doesn't contais one of the nodes" if ( !@nodes.include?(node1) | !@nodes.include?(node2))
+		raise ArgumentError, "The graph doesn't contain the edge" if ( !@edges[node1].include?(node2) | !@edges[node2].include?(node1))
+		edge_attr_name.each_index{|x| @edge_attr[node1][node2].delete(edge_attr_name[x])}
+		edge_attr_name.each_index{|x| @edge_attr[node2][node1].delete(edge_attr_name[x])}
 	end
 
 	def order
