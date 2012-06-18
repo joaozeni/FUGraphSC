@@ -44,10 +44,10 @@ class Graph
 		raise ArgumentError, "The graph doesn't contais one of the nodes" if ( !@nodes.include?(node1) | !@nodes.include?(node2))
 		@edges[node1] << node2
 		@edges_attr[node1][node2] = Hash.new
-		edge_attr_name.each_index{|x| @edge_attr[node1][node2][edge_attr_name[x]] = edge_attr[x]}
+		edge_attr_name.each_index{|x| @edges_attr[node1][node2][edge_attr_name[x]] = edge_attr[x]}
 		@edges[node2] << node1
 		@edges_attr[node2][node1] = Hash.new
-		edge_attr_name.each_index{|x| @edge_attr[node2][node1][edge_attr_name[x]] = edge_attr[x]}
+		edge_attr_name.each_index{|x| @edges_attr[node2][node1][edge_attr_name[x]] = edge_attr[x]}
 	end
 
 	def remove_edge(node1, node2)
