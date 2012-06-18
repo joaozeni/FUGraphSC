@@ -8,6 +8,7 @@ class Graph
 		@edges_attr = Hash.new
 	end
 
+	#Usados nos testes.
 	attr_accessor :nodes
 	attr_accessor :edges
 	attr_accessor :nodes_attr
@@ -147,5 +148,64 @@ class Graph
 			printed << x
 		end
 		return graph_string
+	end
+
+	def shortest_path_dijkstra(node1, node2)
+		raise ArgumentError, "The graph doesn't contais one of the nodes" if ( !@nodes.include?(node1) | !@nodes.include?(node2))
+		d = Hash.new
+		prev = Hash.new
+		infinity = 1 << 64
+		dtotal = 0
+		@nodes.each { |x| d[x] = infinity }
+		@nodes.each { |x| add_node_attr(x, ["mark"], [false]) }
+		q = @nodes
+		d[node1] = 0
+		prev[node1] = nil
+		atual = node1
+		while(q.size > 0) do
+			@edges[atual].each do |x|
+				if d[x] > dtotal + @edges_attr[node1][x]["weight"]
+					d[x] = dtotal + @edges_attr[node1][x]["weight"]
+				end
+			end
+			prox = get_min(d)
+			prev[prox] = atual
+			dtotal = dtotal + get_min_value(d)
+			q.delete(atual)
+			atual = prox
+		end
+		path = find_path(prev, node2)
+		return path
+	end
+
+	def find_path(ant, node)
+		x = []
+		if ant[node] == nil
+			return x = x + node
+		else
+			return x = x + node + find_path(ant, ant[node])
+		end
+	end
+
+	def get_min_key(x)
+		min_value = x[x.keys[0]]
+		min_key = x.keys[0]
+		x.each_value do |v|
+			if v < min_value
+				min_value = v
+				min_key = x.key(v)
+			end
+		end
+		return min_key
+	end
+
+	def get_min_value(x)
+		min_value = x[x.keys[0]]
+		x.each_value do |v|
+			if v < min_value
+				min_value = v
+			end
+		end
+		return min_value
 	end
 end
